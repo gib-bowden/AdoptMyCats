@@ -9,24 +9,15 @@ const printToDom = (str) => {
 };
 
 $('#showButton').click(() => {
-    let success = triggerCatCall(); 
-    resetInput(success); 
+    triggerCatCall(); 
 });
 
 $('#catInput').keypress(function (e) {
     if (e.which === 13) {
-        let success = triggerCatCall();
-        dom.resetInput(success); 
+        triggerCatCall();
     }
 });
 
-const resetInput = (bool) => {
-    if (bool) {
-        $('#input-form').empty()
-            .append(dom.createClearButton(cats.getDisabledCats().length)); 
-            console.log("from events", cats.getDisabledCats()); 
-    }
-}; 
 
 const triggerCatCall = () => {
     let numOfCats = $('#catInput').val();
@@ -37,10 +28,9 @@ const triggerCatCall = () => {
 };
 
 
-$('#clearButton').click(() => {
-    $('#catHolder').empty();
-    let catInput = document.getElementById("catInput");
-    catInput.placeholder = "how many cats you want?"; 
+$('body').on('click', '#clearButton', function () {
+    dom.createDomString(cats.getDisabledCats()); 
+
 });
 
 

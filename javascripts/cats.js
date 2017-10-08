@@ -13,9 +13,6 @@ const callCats = (num) => {
     .done((data) => { 
         setCats(data.cats);
     })   
-    .done(() => { 
-        setDisabledCats();
-    }) 
     .done(() => {
         dom.createDomString(cats); 
     })
@@ -28,20 +25,16 @@ const getCats = () => {
     return cats; 
 };
 
-const setDisabledCats = () => {
+const getDisabledCats = () => {
     disabledCats = cats.filter((cat) => {
-        return cat.numberOfToes !== 10; 
+        return cat.numberOfToes < 10; 
     });
+    return disabledCats; 
 };
 
 const setCats = (arr) => {
     cats = arr; 
 };
-
-const getDisabledCats = () => {
-    return disabledCats; 
-};
-
 
 module.exports = {
     callCats,

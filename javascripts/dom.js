@@ -2,9 +2,10 @@
 
 const createDomString = (arr) => {
     let catString = "";
+    let disabled = []; 
     arr.forEach((cat, index) =>{
-        let disabledClass = (cat.numberOfToes != 10) ? "disabled-kitty" : "regular-kitty"; 
-
+        let disabledClass = (cat.numberOfToes < 10) ? "disabled-kitty" : "regular-kitty";
+        if (disabledClass === "disabled-kitty") {disabled.push(index);}
         catString += 
         `<div class="cat-card">
             <div class="image-container">
@@ -19,6 +20,7 @@ const createDomString = (arr) => {
         </div>`;
     });
     printToDom(catString); 
+    createClearButton(disabled.length);
 };
 
 const printToDom = (str) => {
@@ -26,10 +28,9 @@ const printToDom = (str) => {
 };
 
 const createClearButton = (num) => {
-    return `<button id="clearButton" class="btn btn-default">Kill the ${num} deformed?</button>`;
+    let btnHtml = `<button id="clearButton" class="btn btn-default">Kill the ${num} deformed?</button>`;
+    $('#input-form').empty().append(btnHtml); 
 };
-
-
 
 module.exports = {
     createDomString,

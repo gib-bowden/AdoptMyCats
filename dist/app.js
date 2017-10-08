@@ -14,9 +14,6 @@ const callCats = (num) => {
     .done((data) => { 
         setCats(data.cats);
     })   
-    .done(() => { 
-        setDisabledCats();
-    }) 
     .done(() => {
         dom.createDomString(cats); 
     })
@@ -29,20 +26,16 @@ const getCats = () => {
     return cats; 
 };
 
-const setDisabledCats = () => {
+const getDisabledCats = () => {
     disabledCats = cats.filter((cat) => {
-        return cat.numberOfToes !== 10; 
+        return cat.numberOfToes < 10; 
     });
+    return disabledCats; 
 };
 
 const setCats = (arr) => {
     cats = arr; 
 };
-
-const getDisabledCats = () => {
-    return disabledCats; 
-};
-
 
 module.exports = {
     callCats,
@@ -55,9 +48,10 @@ module.exports = {
 
 const createDomString = (arr) => {
     let catString = "";
+    let disabled = []; 
     arr.forEach((cat, index) =>{
-        let disabledClass = (cat.numberOfToes != 10) ? "disabled-kitty" : "regular-kitty"; 
-
+        let disabledClass = (cat.numberOfToes < 10) ? "disabled-kitty" : "regular-kitty";
+        if (disabledClass === "disabled-kitty") {disabled.push(index);}
         catString += 
         `<div class="cat-card">
             <div class="image-container">
@@ -72,6 +66,7 @@ const createDomString = (arr) => {
         </div>`;
     });
     printToDom(catString); 
+    createClearButton(disabled.length);
 };
 
 const printToDom = (str) => {
@@ -79,10 +74,9 @@ const printToDom = (str) => {
 };
 
 const createClearButton = (num) => {
-    return `<button id="clearButton" class="btn btn-default">Kill the ${num} deformed?</button>`;
+    let btnHtml = `<button id="clearButton" class="btn btn-default">Kill the ${num} deformed?</button>`;
+    $('#input-form').empty().append(btnHtml); 
 };
-
-
 
 module.exports = {
     createDomString,
@@ -100,24 +94,15 @@ const printToDom = (str) => {
 };
 
 $('#showButton').click(() => {
-    let success = triggerCatCall(); 
-    resetInput(success); 
+    triggerCatCall(); 
 });
 
 $('#catInput').keypress(function (e) {
     if (e.which === 13) {
-        let success = triggerCatCall();
-        dom.resetInput(success); 
+        triggerCatCall();
     }
 });
 
-const resetInput = (bool) => {
-    if (bool) {
-        $('#input-form').empty()
-            .append(dom.createClearButton(cats.getDisabledCats().length)); 
-            console.log("from events", cats.getDisabledCats()); 
-    }
-}; 
 
 const triggerCatCall = () => {
     let numOfCats = $('#catInput').val();
@@ -128,10 +113,9 @@ const triggerCatCall = () => {
 };
 
 
-$('#clearButton').click(() => {
-    $('#catHolder').empty();
-    let catInput = document.getElementById("catInput");
-    catInput.placeholder = "how many cats you want?"; 
+$('body').on('click', '#clearButton', function () {
+    dom.createDomString(cats.getDisabledCats()); 
+
 });
 
 
