@@ -2,43 +2,45 @@
 "use strict";
 
 const cats = require('./cats');
-
-const createDomString = (arr) => {
-    let catString = "";
-    arr.forEach((cat, index) =>{
-        let disabledClass = (cat.numberOfToes != 10) ? "disabled-kitty" : "regular-kitty"; 
-
-        catString += 
-        `<div class="cat-card">
-            <div class="image-container">
-                <img src="${cat.imageUrl}">
-            </div>
-            <div class="description-container">
-                <h3> ${cat.name} </h3>
-                <p> Color: ${cat.color} </p>
-                <p> Skills: ${cat.specialSkill} </p>
-                <p class="${disabledClass}"> Toes: ${cat.numberOfToes} </p>
-            </div>
-        </div>`;
-    });
-    printToDom(catString); 
-};
+const dom = require('./dom');
 
 const printToDom = (str) => {
     $('#catHolder').html(str);
 };
 
 $('#showButton').click(() => {
-    let numOfCats = $('#catInput').val();
-    if (numOfCats) {
-        cats.callCats(numOfCats);
-        createDomString(cats.getCats()); 
-    }      
+    let success = triggerCatCall(); 
+    resetInput(success); 
 });
+
+$('#catInput').keypress(function (e) {
+    if (e.which === 13) {
+        let success = triggerCatCall();
+        dom.resetInput(success); 
+    }
+});
+
+const resetInput = (bool) => {
+    if (bool) {
+        $('#input-form').empty()
+            .append(dom.createClearButton(cats.getDisabledCats().length)); 
+            console.log("from events", cats.getDisabledCats()); 
+    }
+}; 
+
+const triggerCatCall = () => {
+    let numOfCats = $('#catInput').val();
+    if (Number(numOfCats) > 0) {
+        cats.callCats(numOfCats);
+        return true;  
+    } else return false;    
+};
 
 
 $('#clearButton').click(() => {
     $('#catHolder').empty();
+    let catInput = document.getElementById("catInput");
+    catInput.placeholder = "how many cats you want?"; 
 });
 
 
