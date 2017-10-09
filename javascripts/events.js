@@ -2,43 +2,30 @@
 "use strict";
 
 const cats = require('./cats');
-
-const createDomString = (arr) => {
-    let catString = "";
-    arr.forEach((cat, index) =>{
-        let disabledClass = (cat.numberOfToes != 10) ? "disabled-kitty" : "regular-kitty"; 
-
-        catString += 
-        `<div class="cat-card">
-            <div class="image-container">
-                <img src="${cat.imageUrl}">
-            </div>
-            <div class="description-container">
-                <h3> ${cat.name} </h3>
-                <p> Color: ${cat.color} </p>
-                <p> Skills: ${cat.specialSkill} </p>
-                <p class="${disabledClass}"> Toes: ${cat.numberOfToes} </p>
-            </div>
-        </div>`;
-    });
-    printToDom(catString); 
-};
-
-const printToDom = (str) => {
-    $('#catHolder').html(str);
-};
+const dom = require('./dom');
 
 $('#showButton').click(() => {
-    let numOfCats = $('#catInput').val();
-    if (numOfCats) {
-        cats.callCats(numOfCats);
-        createDomString(cats.getCats()); 
-    }      
+    triggerCatCall(); 
+});
+
+$('#catInput').keypress(function (e) {
+    if (e.which === 13) {
+        triggerCatCall();
+    }
 });
 
 
-$('#clearButton').click(() => {
-    $('#catHolder').empty();
+const triggerCatCall = () => {
+    let numOfCats = $('#catInput').val();
+    if (Number(numOfCats) > 0) {
+        cats.callCats(numOfCats);
+    }
+};
+
+
+$('body').on('click', '#clearButton', function () {
+    dom.createDomString(cats.getNonDisabledCats()); 
+
 });
 
 
