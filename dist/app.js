@@ -4,7 +4,7 @@
 const dom = require('./dom');
 
 let cats = []; 
-let disabledCats = []; 
+let nonDisabledCats = []; 
 
 const callCats = (num) => {
     $.ajax({
@@ -26,11 +26,11 @@ const getCats = () => {
     return cats; 
 };
 
-const getDisabledCats = () => {
-    disabledCats = cats.filter((cat) => {
-        return cat.numberOfToes < 10; 
+const getNonDisabledCats = () => {
+    nonDisabledCats = cats.filter((cat) => {
+        return cat.numberOfToes > 10; 
     });
-    return disabledCats; 
+    return nonDisabledCats; 
 };
 
 const setCats = (arr) => {
@@ -40,7 +40,7 @@ const setCats = (arr) => {
 module.exports = {
     callCats,
     getCats,
-    getDisabledCats
+    getNonDisabledCats
 };
 
 },{"./dom":2}],2:[function(require,module,exports){
@@ -49,21 +49,28 @@ module.exports = {
 const createDomString = (arr) => {
     let catString = "";
     let disabled = []; 
+    let columns = 4;
     arr.forEach((cat, index) =>{
-        let disabledClass = (cat.numberOfToes < 10) ? "disabled-kitty" : "regular-kitty";
+        let disabledClass = (cat.numberOfToes <= 10) ? "disabled-kitty" : "regular-kitty";
         if (disabledClass === "disabled-kitty") {disabled.push(index);}
+        if (index % columns === 0) {
+            catString += `<div class="row">`;               
+        }
         catString += 
-        `<div class="cat-card">
-            <div class="image-container">
-                <img src="${cat.imageUrl}">
-            </div>
-            <div class="description-container">
-                <h3> ${cat.name} </h3>
-                <p> Color: ${cat.color} </p>
-                <p> Skills: ${cat.specialSkill} </p>
-                <p class="${disabledClass}"> Toes: ${cat.numberOfToes} </p>
-            </div>
-        </div>`;
+            `<div class="cat-card col-md-${12/columns}">
+                <div class="image-container">
+                    <img src="${cat.imageUrl}">
+                </div>
+                <div class="description-container">
+                    <h3> ${cat.name} </h3>
+                    <p> Color: ${cat.color} </p>
+                    <p> Skills: ${cat.specialSkill} </p>
+                    <p class="${disabledClass}"> Toes: ${cat.numberOfToes} </p>
+                </div>
+            </div>`;
+        if ((index + 1) % columns === 0) {
+            catString += `</div>`;           
+        }
     });
     printToDom(catString); 
     createClearButton(disabled.length);
@@ -75,7 +82,8 @@ const printToDom = (str) => {
 
 const createClearButton = (num) => {
     let btnHtml = `<button id="clearButton" class="btn btn-default">Kill the ${num} deformed?</button>`;
-    $('#input-form').empty().append(btnHtml); 
+    $('#input-form').empty();
+    if (num > 0) {$('#input-form').append(btnHtml);}
 };
 
 module.exports = {
@@ -88,10 +96,6 @@ module.exports = {
 
 const cats = require('./cats');
 const dom = require('./dom');
-
-const printToDom = (str) => {
-    $('#catHolder').html(str);
-};
 
 $('#showButton').click(() => {
     triggerCatCall(); 
@@ -108,13 +112,12 @@ const triggerCatCall = () => {
     let numOfCats = $('#catInput').val();
     if (Number(numOfCats) > 0) {
         cats.callCats(numOfCats);
-        return true;  
-    } else return false;    
+    }
 };
 
 
 $('body').on('click', '#clearButton', function () {
-    dom.createDomString(cats.getDisabledCats()); 
+    dom.createDomString(cats.getNonDisabledCats()); 
 
 });
 

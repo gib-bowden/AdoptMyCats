@@ -3,7 +3,7 @@
 const dom = require('./dom');
 
 let cats = []; 
-let disabledCats = []; 
+let nonDisabledCats = []; 
 
 const callCats = (num) => {
     $.ajax({
@@ -25,11 +25,11 @@ const getCats = () => {
     return cats; 
 };
 
-const getDisabledCats = () => {
-    disabledCats = cats.filter((cat) => {
-        return cat.numberOfToes < 10; 
+const getNonDisabledCats = () => {
+    nonDisabledCats = cats.filter((cat) => {
+        return cat.numberOfToes > 10; 
     });
-    return disabledCats; 
+    return nonDisabledCats; 
 };
 
 const setCats = (arr) => {
@@ -39,5 +39,5 @@ const setCats = (arr) => {
 module.exports = {
     callCats,
     getCats,
-    getDisabledCats
+    getNonDisabledCats
 };
